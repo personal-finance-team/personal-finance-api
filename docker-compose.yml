@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:18
+    container_name: personal_finance_db
+    environment:
+      POSTGRES_USER: personal_finance_user
+      POSTGRES_PASSWORD: PF_3249
+      POSTGRES_DB: personal_finance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql  
+
+volumes:
+  pgdata:
