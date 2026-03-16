@@ -1,0 +1,88 @@
+// 使用するデータベースの種類を指定
+generator client {
+  provider = "prisma-client-js"
+}
+
+// データベース接続情報を .env から取得
+datasource db {
+  provider = "postgresql"
+}
+
+// ユーザー
+model User {
+  id String @id // supabase user id
+  name String
+  gender Gender? 
+  birthday DateTime?
+  prefectureId Int?
+  prefecture Prefecture? @relation(fields: [prefectureId], references: [id])
+  occupationId Int?
+  occupation Occupation? @relation(fields: [occupationId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categories Category[]
+  transactions Transaction[]
+}
+
+// 性別
+enum Gender {
+  MAN
+  WOMAN
+}
+
+// 都道府県
+model Prefecture {
+  id Int @id
+  name String
+
+  users User[]
+}
+
+// 職業
+model Occupation {
+  id Int @id @default(autoincrement())
+  name String
+
+  users User[]
+}
+
+// 収支カテゴリ
+model Category {
+  id Int @id @default(autoincrement())
+  userId String? 
+  user User? @relation(fields: [userId], references: [id])
+  name String
+  color String
+  categoryTypeId Int
+  categoryType CategoryType @relation(fields: [categoryTypeId], references: [id])
+  sortOrder Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  transactions Transaction[]
+}
+
+// カテゴリタイプ
+model CategoryType {
+  id Int @id @default(autoincrement())
+  name String
+
+  categories Category[]
+}
+
+// 収支データ
+model Transaction {
+  id Int @id @default(autoincrement())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+  date DateTime
+  amount Int
+  memo String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
